@@ -309,6 +309,8 @@ class Gps final {
    */
   bool setUseAdr(bool enable);
 
+  bool sendRtcm(const std::vector<uint8_t> &message);
+
   /**
    * @brief Configure the U-Blox to UTC time
    * @return true on ACK, false on other conditions.

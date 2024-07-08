@@ -134,6 +134,8 @@ class UbloxNode final : public rclcpp::Node {
    */
   void printInf(const ublox_msgs::msg::Inf &m, uint8_t id);
 
+  void sendRtcm(const std::vector<uint8_t> &message);
+  
  private:
 
   /**

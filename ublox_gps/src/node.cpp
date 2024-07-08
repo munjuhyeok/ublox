@@ -517,6 +517,11 @@ void UbloxNode::printInf(const ublox_msgs::msg::Inf &m, uint8_t id) {
   }
 }
 
+void UbloxNode::sendRtcm(const std::vector<uint8_t> &message)
+{
+  gps_->sendRtcm(message);
+}
+
 void UbloxNode::subscribe() {
   RCLCPP_DEBUG(this->get_logger(), "Subscribing to U-Blox messages");
   // subscribe messages

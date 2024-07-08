@@ -17,7 +17,3 @@ ublox_gps_node:
 
     inf:
       all: true                   # Whether to display all INF messages in console
-    
-    publish:
-      nav:
-        relposned: true
