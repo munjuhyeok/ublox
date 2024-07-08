@@ -15,8 +15,11 @@ int main(int argc, char** argv) {
   rclcpp::NodeOptions nodeOptions;
   auto config_directory = ament_index_cpp::get_package_share_directory("ublox_gps") + "/config";
   auto base_params = config_directory + "/zed_f9p_base.yaml";
-  nodeOptions.arguments({"--ros-args", "--params-file", base_params});
+  auto rover_params = config_directory + "/zed_f9p_rover.yaml";
+  nodeOptions.arguments({"--ros-args", "--params-file", base_params, "--ros-args", "-r", "__ns:=/base"});
   std::shared_ptr<ublox_node::UbloxNode> ublox_node_base = std::make_shared<ublox_node::UbloxNode>(nodeOptions);
+  nodeOptions.arguments({"--ros-args", "--params-file", rover_params, "--ros-args", "-r", "__ns:=/rover"});
+  std::shared_ptr<ublox_node::UbloxNode> ublox_node_rover = std::make_shared<ublox_node::UbloxNode>(nodeOptions);
 
 
   // below is for ntrip client
@@ -39,8 +42,10 @@ int main(int argc, char** argv) {
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
 
-
-  rclcpp::spin(ublox_node_base);
+  rclcpp::executors::MultiThreadedExecutor executor;
+  executor.add_node(ublox_node_base);
+  executor.add_node(ublox_node_rover);
+  executor.spin();
   rclcpp::shutdown();
 
   ntrip_client_thread.join();
