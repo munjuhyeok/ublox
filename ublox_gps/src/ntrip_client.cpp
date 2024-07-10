@@ -116,13 +116,15 @@ bool NtripClient::Run(void) {
   if (connect(socket_fd, reinterpret_cast<struct sockaddr *>(&server_addr),
       sizeof(server_addr)) < 0) {
     printf("Connect to NtripCaster[%s:%d] failed, errno = -%d\r\n",
-        server_url_, server_port_, errno);
+        server_url_.c_str(), server_port_, errno);
 #if defined(WIN32) || defined(_WIN32)
     closesocket(socket_fd);
     WSACleanup();
 #else
     close(socket_fd);
 #endif  // defined(WIN32) || defined(_WIN32)
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    Run(); // repeat until connected
     return false;
   }
   // Set non-blocking.
