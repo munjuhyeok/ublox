@@ -1,3 +1,44 @@
+# Setup Instructions for moving base
+## Hardware Connections
+1. Connect Base and Rover via UART
+- Connect the ground of the base to the ground of the rover.
+- Connect the TX (transmit) pin of the base to the RX (receive) pin of the rover.
+2. Connect to PC
+- Ensure that the ports in the configuration match the physical connections.
+- By default, the base should be connected to /dev/ttyACM0 and the rover to /dev/ttyACM1(Connect the base to the PC first)
+
+## Software Connections
+1. Launch ROS2 Nodes
+```bash
+ros2 launch ublox_gps ublox_gps_node-launch.py
+```
+2. Verify Internet Connection and Ntrip Client
+- Check if the internet connection is stable.
+- Verify that the Ntrip Client is running by looking for the message: "NtripClient service running...."
+
+2. Verify Message Publication
+- Ensure that messages are being published correctly by checking the following topics:
+   - /base/fix
+   - /rover/navrelposned
+- It is recommended to verify that these messages are non-zero when tested outside the building.
+
+# How to Visualize Data
+1. Run MapProxy for Google Maps Satellite Image
+```bash
+mkdir ~/mapproxy
+sudo docker run -p 8080:8080 -d -t -v ~/mapproxy:/mapproxy danielsnider/mapproxy
+```
+You can access tile images through http://localhost:8080/wmts/gm_layer/gm_grid/{level}/{x}/{y}.png
+
+2. Play the Recorded ROS2 Bag
+```bash
+ros2 bag play $your_bag
+```
+3. Run the Visualizer Node
+```bash
+ros2 run gnss_visualizer listener
+```
+
 # ublox
 The `ublox` package provides support for [u-blox](http://www.u-blox.com) GPS receivers. Only the _serial_ configuration of the driver is documented here, but TCP/UDP communication is also supported by the driver (untested).
 
