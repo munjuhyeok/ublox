@@ -97,12 +97,14 @@ bool NtripClient::Run(void) {
 #if defined(WIN32) || defined(_WIN32)
   WSADATA ws_data;
   if (WSAStartup(MAKEWORD(2,2), &ws_data) != 0) {
+    Run(); // repeat until connected
     return false;
   }
   socket_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   if (socket_fd == INVALID_SOCKET) {
     printf("Create socket failed!\r\n");
     WSACleanup();
+    Run(); // repeat until connected
     return false;
   }
   server_addr.sin_addr.S_un.S_addr = inet_addr(server_url_.c_str());
@@ -110,6 +112,7 @@ bool NtripClient::Run(void) {
   socket_fd = socket(AF_INET, SOCK_STREAM, 0);
   if (socket_fd == -1) {
     printf("Create socket failed, errno = -%d\r\n", errno);
+    Run(); // repeat until connected
     return false;
   }
 #endif  // defined(WIN32) || defined(_WIN32)
@@ -133,6 +136,7 @@ bool NtripClient::Run(void) {
   if (ioctlsocket(socket_fd, FIONBIO, &ul) == SOCKET_ERROR) {
     closesocket(socket_fd);
     WSACleanup();
+    Run(); // repeat until connected
     return false;
   }
 #else
@@ -162,6 +166,7 @@ bool NtripClient::Run(void) {
 #else
     close(socket_fd);
 #endif  // defined(WIN32) || defined(_WIN32)
+    Run(); // repeat until connected
     return false;
   }
   // Waitting for request to connect caster success.
@@ -184,6 +189,7 @@ bool NtripClient::Run(void) {
 #else
           close(socket_fd);
 #endif  // defined(WIN32) || defined(_WIN32)
+          Run(); // repeat until connected
           return false;
         }
         break;
@@ -198,6 +204,7 @@ bool NtripClient::Run(void) {
 #else
       close(socket_fd);
 #endif  // defined(WIN32) || defined(_WIN32)
+      Run(); // repeat until connected
       return false;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -212,6 +219,7 @@ bool NtripClient::Run(void) {
 #else
     close(socket_fd);
 #endif  // defined(WIN32) || defined(_WIN32)
+    Run();
     return false;
   }
   // TCP socket keepalive.

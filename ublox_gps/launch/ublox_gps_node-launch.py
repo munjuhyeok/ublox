@@ -46,11 +46,13 @@ def generate_launch_description():
     params = os.path.join(config_directory, 'zed_f9p_base.yaml')
     ublox_gps_node_base = launch_ros.actions.Node(package='ublox_gps',
                                              executable='ublox_gps_node',
+                                             namespace='base',
                                              output='both',
                                              parameters=[params])
     params = os.path.join(config_directory, 'zed_f9p_rover.yaml')
     ublox_gps_node_rover = launch_ros.actions.Node(package='ublox_gps',
                                              executable='ublox_gps_node',
+                                             namespace='rover',
                                              output='both',
                                              parameters=[params])
 
@@ -61,11 +63,11 @@ def generate_launch_description():
                                              on_exit=[launch.actions.EmitEvent(
                                                  event=launch.events.Shutdown())],
                                          )),
-                                    #  ublox_gps_node_rover,
-                                    #  launch.actions.RegisterEventHandler(
-                                    #      event_handler=launch.event_handlers.OnProcessExit(
-                                    #          target_action=ublox_gps_node_rover,
-                                    #          on_exit=[launch.actions.EmitEvent(
-                                    #              event=launch.events.Shutdown())],
-                                    #      )),
+                                     ublox_gps_node_rover,
+                                     launch.actions.RegisterEventHandler(
+                                         event_handler=launch.event_handlers.OnProcessExit(
+                                             target_action=ublox_gps_node_rover,
+                                             on_exit=[launch.actions.EmitEvent(
+                                                 event=launch.events.Shutdown())],
+                                         )),
                                      ])

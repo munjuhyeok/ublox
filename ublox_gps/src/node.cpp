@@ -173,6 +173,7 @@ std::vector<std::string> stringSplit(const std::string &str,
 // u-blox ROS Node
 //
 UbloxNode::UbloxNode(const rclcpp::NodeOptions & options) : rclcpp::Node("ublox_gps_node", options) {
+  bool rtcm = this->declare_parameter("rtcm", false);
   int debug = this->declare_parameter("debug", 1);
   if (debug) {
     if (rcutils_logging_set_logger_level("ublox_gps_node", RCUTILS_LOG_SEVERITY_DEBUG) != RCUTILS_RET_OK) {
@@ -212,24 +213,7 @@ void UbloxNode::addFirmwareInterface() {
 
 void UbloxNode::addProductInterface(const std::string & product_category,
                                     const std::string & ref_rov) {
-  if (product_category == "HPG" && ref_rov == "REF") {
-    components_.push_back(std::make_shared<HpgRefProduct>(nav_rate_, meas_rate_, updater_, rtcms_, this));
-  } else if (product_category == "HPG" && ref_rov == "ROV") {
-    components_.push_back(std::make_shared<HpgRovProduct>(nav_rate_, updater_, this));
-  } else if (product_category == "HPG") {
-    components_.push_back(std::make_shared<HpPosRecProduct>(nav_rate_, meas_rate_, frame_id_, updater_, rtcms_, this));
-  } else if (product_category == "TIM") {
-    components_.push_back(std::make_shared<TimProduct>(frame_id_, updater_, this));
-  } else if (product_category == "ADR" ||
-             product_category == "UDR") {
-    components_.push_back(std::make_shared<AdrUdrProduct>(nav_rate_, meas_rate_, frame_id_, updater_, this));
-  } else if (product_category == "FTS") {
-    components_.push_back(std::make_shared<FtsProduct>());
-  } else if (product_category == "SPG") {
-    RCLCPP_WARN(this->get_logger(), "Product category %s %s from MonVER message not recognized %s",
-                product_category.c_str(), ref_rov.c_str(),
-                "options are HPG REF, HPG ROV, HPG #.#, TIM, ADR, UDR, FTS, SPG");
-  }
+  components_.push_back(std::make_shared<HpgRovProduct>(nav_rate_, updater_, this));
 }
 
 void UbloxNode::getRosParams() {
