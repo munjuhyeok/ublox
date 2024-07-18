@@ -25,7 +25,7 @@ HpgRovProduct::HpgRovProduct(uint16_t nav_rate, std::shared_ptr<diagnostic_updat
 {
   if (getRosBoolean(node_, "publish.nav.relposned")) {
     nav_rel_pos_ned_pub_ =
-      node_->create_publisher<ublox_msgs::msg::NavRELPOSNED>("navrelposned", 1);
+      node_->create_publisher<ublox_msgs::msg::NavRELPOSNED9>("navrelposned", 1);
   }
 }
 
@@ -45,7 +45,7 @@ bool HpgRovProduct::configureUblox(std::shared_ptr<ublox_gps::Gps> gps) {
 
 void HpgRovProduct::subscribe(std::shared_ptr<ublox_gps::Gps> gps) {
   // Subscribe to Nav Relative Position NED messages (also updates diagnostics)
-  gps->subscribe<ublox_msgs::msg::NavRELPOSNED>(std::bind(
+  gps->subscribe<ublox_msgs::msg::NavRELPOSNED9>(std::bind(
      &HpgRovProduct::callbackNavRelPosNed, this, std::placeholders::_1), 1);
 }
 
@@ -92,7 +92,7 @@ void HpgRovProduct::carrierPhaseDiagnostics(
   }
 }
 
-void HpgRovProduct::callbackNavRelPosNed(const ublox_msgs::msg::NavRELPOSNED &m) {
+void HpgRovProduct::callbackNavRelPosNed(const ublox_msgs::msg::NavRELPOSNED9 &m) {
   if (getRosBoolean(node_, "publish.nav.relposned")) {
     nav_rel_pos_ned_pub_->publish(m);
   }

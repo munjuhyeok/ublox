@@ -70,11 +70,10 @@ class HpgRovProduct final : public virtual ComponentInterface {
    *
    * @details Publish received NavRELPOSNED messages if enabled
    */
-  void callbackNavRelPosNed(const ublox_msgs::msg::NavRELPOSNED &m);
-
+  void callbackNavRelPosNed(const ublox_msgs::msg::NavRELPOSNED9 &m);
 
   //! Last relative position (used for diagnostic updater)
-  ublox_msgs::msg::NavRELPOSNED last_rel_pos_;
+  ublox_msgs::msg::NavRELPOSNED9 last_rel_pos_;
 
   //! The DGNSS mode
   /*! see CfgDGNSS message for possible values */
@@ -83,7 +82,7 @@ class HpgRovProduct final : public virtual ComponentInterface {
   //! The RTCM topic frequency diagnostic updater
   std::unique_ptr<UbloxTopicDiagnostic> freq_rtcm_;
 
-  rclcpp::Publisher<ublox_msgs::msg::NavRELPOSNED>::SharedPtr nav_rel_pos_ned_pub_;
+  rclcpp::Publisher<ublox_msgs::msg::NavRELPOSNED9>::SharedPtr nav_rel_pos_ned_pub_;
 
   uint16_t nav_rate_;
   std::shared_ptr<diagnostic_updater::Updater> updater_;
